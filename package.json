@@ -1,0 +1,29 @@
+{
+    "name": "node-red-contrib-google-calendar",
+    "version": "0.0.1",
+    "author": "minh hien <taminhhien.mor.vn@gmail.com>",
+    "description": "The simplest of simple nodes with google calendar",
+    "keywords": [
+        "node-red",
+        "google-calendar"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/taminhhienmor/node-red-google-calendar"
+    },
+    "maintainers": [
+        {
+            "name": "minh hien",
+            "email": "taminhhien.mor.vn@gmail.com"
+        }
+    ],
+    "node-red": {
+        "nodes": {
+            "addEvent": "source/addEvent.js",
+            "getEvent": "source/getEvent.js"
+        }
+    },
+    "dependencies": {
+        "request": "*"
+    }
+}

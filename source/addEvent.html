@@ -1,0 +1,177 @@
+<script type="text/javascript">
+    RED.nodes.registerType('addEvent',{
+        category: 'Google Calendar',
+        color: '#ffaaaa',
+        defaults: {
+            token: {value:""},
+            calendarId: {value:""},
+            tittle: {value:""},
+            description: {value:""},
+            location: {value:""},
+            start: {value:""},
+            end: {value:""},
+            attend: {value:""},
+            email1: {value:""},
+            name1: {value:""},
+            email2: {value:""},
+            name2: {value:""},
+            email3: {value:""},
+            name3: {value:""},
+            email4: {value:""},
+            name4: {value:""},
+            email5: {value:""},
+            name5: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "og-img.png",
+        paletteLabel: 'Add Event',
+        label: function() {
+            return this.name||"Add Event";
+        }
+    });
+
+    function selectNone() {
+        document.getElementById("grpOption1").style.display = "none";
+        document.getElementById("grpOption2").style.display = "none";
+        document.getElementById("grpOption3").style.display = "none";
+        document.getElementById("grpOption4").style.display = "none";
+        document.getElementById("grpOption5").style.display = "none";
+    }
+
+    function selectAttendPerson(nameSelect)
+    {
+        if(nameSelect) {
+            switch (parseInt(nameSelect.value)) {
+            case 0:
+                selectNone();
+                break;
+            case 1:
+                selectNone();
+                document.getElementById("grpOption1").style.display = "block";            
+                break;
+            case 2:
+                selectNone();
+                document.getElementById("grpOption1").style.display = "block";
+                document.getElementById("grpOption2").style.display = "block";  
+                break;
+            case 3:
+                selectNone();
+                document.getElementById("grpOption1").style.display = "block";
+                document.getElementById("grpOption2").style.display = "block";
+                document.getElementById("grpOption3").style.display = "block";
+                break;
+            case 4:
+                selectNone();
+                document.getElementById("grpOption1").style.display = "block";
+                document.getElementById("grpOption2").style.display = "block";
+                document.getElementById("grpOption3").style.display = "block";
+                document.getElementById("grpOption4").style.display = "block";
+                break;
+            case 5:
+                selectNone();
+                document.getElementById("grpOption1").style.display = "block";
+                document.getElementById("grpOption2").style.display = "block";
+                document.getElementById("grpOption3").style.display = "block";
+                document.getElementById("grpOption4").style.display = "block";
+                document.getElementById("grpOption5").style.display = "block";
+                break;
+            default:
+                selectNone();   
+                break;
+            }                        
+        }
+        else {
+            selectNone();
+        }
+    }
+</script>
+
+<script type="text/x-red" data-template-name="addEvent">
+    <div class="form-row">
+        <label for="node-input-token"><i class="icon-tag"></i> Google Token</label>
+        <input type="text" id="node-input-token" placeholder="YOUR_TOKEN_HERE">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendarId"><i class="icon-tag"></i> Id calendar</label>
+        <input type="text" id="node-input-calendarId" placeholder="CALENDAR_ID">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tittle"><i class="icon-tag"></i> Tittle</label>
+        <input type="text" id="node-input-tittle" placeholder="Tittle">
+    </div>
+    <div class="form-row">
+        <label for="node-input-description"><i class="icon-tag"></i> description </label>
+        <input type="text" id="node-input-description" placeholder="description">
+    </div>
+    <div class="form-row">
+        <label for="node-input-location"><i class="icon-tag"></i> location</label>
+        <input type="text" id="node-input-location" placeholder="location">
+    </div>
+    <div class="form-row">
+        <label for="node-input-start"><i class="icon-tag"></i> start</label>
+        <input type="text" id="node-input-start" placeholder="start">
+    </div>
+    <div class="form-row">
+        <label for="node-input-end"><i class="icon-tag"></i> end</label>
+        <input type="text" id="node-input-end" placeholder="end">
+    </div>
+    <div class="form-row">
+        <label for="node-input-attend"><i class="icon-tag"></i> attend</label>
+        <select id="node-input-attend" onchange="selectAttendPerson(this);">
+            <option value="0"></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <label for="node-input-attend"> person</label>    
+        <div id="grpOption1" style="display:none;">
+            <div>
+                <label for="node-input-email1"><i class="icon-tag"></i> email1</label>
+                <input type="text" id="node-input-email1" placeholder="john@example.com">
+                <label for="node-input-name1"><i class="icon-tag"></i> name1</label>
+                <input type="text" id="node-input-name1" placeholder="John">
+            </div>
+        </div>
+        <div id="grpOption2" style="display:none;">
+            <div>
+                <label for="node-input-email2"><i class="icon-tag"></i> email2</label>
+                <input type="text" id="node-input-email2" placeholder="john@example.com">
+                <label for="node-input-name2"><i class="icon-tag"></i> name2</label>
+                <input type="text" id="node-input-name2" placeholder="John">
+            </div>
+        </div>
+        <div id="grpOption3" style="display:none;">
+            <div>
+                <label for="node-input-email3"><i class="icon-tag"></i> email3</label>
+                <input type="text" id="node-input-email3" placeholder="john@example.com">
+                <label for="node-input-name3"><i class="icon-tag"></i> name3</label>
+                <input type="text" id="node-input-name3" placeholder="John">
+            </div>
+        </div>
+        <div id="grpOption4" style="display:none;">
+            <div>
+                <label for="node-input-email4"><i class="icon-tag"></i> email4</label>
+                <input type="text" id="node-input-email4" placeholder="john@example.com">
+                <label for="node-input-name4"><i class="icon-tag"></i> name4</label>
+                <input type="text" id="node-input-name4" placeholder="John">
+            </div>
+        </div>
+        <div id="grpOption5" style="display:none;">
+            <div>
+                <label for="node-input-email5"><i class="icon-tag"></i> email5</label>
+                <input type="text" id="node-input-email5" placeholder="john@example.com">
+                <label for="node-input-name5"><i class="icon-tag"></i> name5</label>
+                <input type="text" id="node-input-name5" placeholder="John">
+            </div>
+        </div>
+    </div>
+    
+</script>
+
+<script type="text/html" data-help-name="addEvent">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
+

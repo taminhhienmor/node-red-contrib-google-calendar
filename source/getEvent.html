@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    RED.nodes.registerType('GetEvent',{
+        category: 'Google Calendar',
+        color: '#ffaaaa',
+        defaults: {
+            token: {value:""},
+            calendarId: {value:""},
+            timeMin: {value:""},
+            timeMax: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "og-img2.png",
+        paletteLabel: 'Get Event',
+        label: function() {
+            return this.name||"Get Event";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="GetEvent">
+    <div class="form-row">
+        <label for="node-input-token"><i class="icon-tag"></i> Google Token</label>
+        <input type="text" id="node-input-token" placeholder="YOUR_TOKEN_HERE">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendarId"><i class="icon-tag"></i> Id calendar</label>
+        <input type="text" id="node-input-calendarId" placeholder="CALENDAR_ID">
+    </div>
+    <div class="form-row">
+        <label for="node-input-timeMin"><i class="icon-tag"></i> Time min</label>
+        <input type="text" id="node-input-timeMin" placeholder="1581496627000">
+    </div>
+    <div class="form-row">
+        <label for="node-input-timeMax"><i class="icon-tag"></i> Time max</label>
+        <input type="text" id="node-input-timeMax" placeholder="1581485827000">
+    </div>    
+</script>
+
+<script type="text/html" data-help-name="GetEvent">
+    <p>A simple node that converts the message payloads into all lower-case characters</p>
+</script>
+
