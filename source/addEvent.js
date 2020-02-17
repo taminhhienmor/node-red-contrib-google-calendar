@@ -1,3 +1,5 @@
+var request = require('request');
+
 module.exports = function(RED) {
     function addEvent(config) {
         RED.nodes.createNode(this,config);
@@ -11,22 +13,39 @@ module.exports = function(RED) {
                 })                
             }            
         }
+
+        var api = 'https://www.googleapis.com/calendar/v3/calendars/'
+        var linkUrl = api + config.calendarId + '/events'
+        var newObj = {
+            summary: config.tittle,
+            description: config.description,
+            location: config.location,
+            start: {dateTime: new Date(config.start)},
+            end: {dateTime: new Date(config.end)},
+            attendees: arrAttend
+        }
+
+        var opts = {
+            method: "POST",
+            url: linkUrl,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + config.token
+            },
+            body: JSON.stringify(newObj)
+        };        
+
         node.on('input', function(msg) {
-            msg.payload = {
-                summary: config.tittle,
-                description: config.description,
-                location: config.location,
-                start: {dateTime: new Date(config.start)},
-                end: {dateTime: new Date(config.end)},
-                attendees: arrAttend
-            }
-            var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-            var url = api + config.calendarId + '/events'
-            msg.url = url;
-            msg.headers = {
-                Authorization: "Bearer " + config.token
-            }
-            node.send(msg);
+            request(opts, function (error, response, body) {
+            
+                if (JSON.parse(body).kind == "calendar#event") {
+                    msg.payload = "Success"
+                } else {
+                    msg.payload = "Fail"
+                }
+                
+                node.send(msg);
+            })
         });
     }
     RED.nodes.registerType("addEvent",addEvent);
