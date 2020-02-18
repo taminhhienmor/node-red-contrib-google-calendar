@@ -1,9 +1,9 @@
 <script type="text/javascript">
     RED.nodes.registerType('addEvent',{
-        category: 'Google Calendar',
-        color: '#ffaaaa',
+        category: 'Google calendar event',
+        color:"#C0DEED",
         defaults: {
-            token: {value:""},
+            google: {type:"google-credentials",required:true},
             calendarId: {value:""},
             tittle: {value:""},
             description: {value:""},
@@ -89,8 +89,8 @@
 
 <script type="text/x-red" data-template-name="addEvent">
     <div class="form-row">
-        <label for="node-input-token"><i class="icon-tag"></i> Google Token</label>
-        <input type="text" id="node-input-token" placeholder="YOUR_TOKEN_HERE">
+        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="calendar.label.google"></span></label>
+        <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
         <label for="node-input-calendarId"><i class="icon-tag"></i> Id calendar</label>

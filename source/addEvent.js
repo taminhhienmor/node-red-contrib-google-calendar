@@ -1,52 +1,99 @@
 var request = require('request');
-
 module.exports = function(RED) {
-    function addEvent(config) {
-        RED.nodes.createNode(this,config);
-        var node = this;
+    "use strict";
+    function addEvent(n) {
+        RED.nodes.createNode(this,n);
+            
+        this.google = RED.nodes.getNode(n.google);
         var arrAttend = [];        
-        if (config.attend > 0) {
-            for (let index = 1; index < parseInt(config.attend) + 1; index++) {
+        if (n.attend > 0) {
+            for (let index = 1; index < parseInt(n.attend) + 1; index++) {
                 arrAttend.push({
-                    email: config["email" + index],
-                    displayName: config["name" + index]
+                    email: n["email" + index],
+                    displayName: n["name" + index]
                 })                
             }            
         }
 
         var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-        var linkUrl = api + config.calendarId + '/events'
+        var linkUrl = api + n.calendarId + '/events'
         var newObj = {
-            summary: config.tittle,
-            description: config.description,
-            location: config.location,
-            start: {dateTime: new Date(config.start)},
-            end: {dateTime: new Date(config.end)},
+            summary: n.tittle,
+            description: n.description,
+            location: n.location,
+            start: {dateTime: new Date(n.start)},
+            end: {dateTime: new Date(n.end)},
             attendees: arrAttend
         }
 
+        
+
+
+        this.calendar = n.calendar || 'primary';
+        this.ongoing = n.ongoing || false;
+
+        if (!this.google || !this.google.credentials.accessToken) {
+            this.warn(RED._("calendar.warn.no-credentials"));
+            return;
+        }
+        
         var opts = {
             method: "POST",
             url: linkUrl,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + config.token
+                "Authorization": "Bearer " + this.google.credentials.accessToken
             },
             body: JSON.stringify(newObj)
-        };        
+        };    
+        
 
-        node.on('input', function(msg) {
-            request(opts, function (error, response, body) {
+        var node = this;
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
+        calendarList(node, function(err) {
+            if (err) {
+                node.error(err,{});
+                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                return;
+            }
+            node.status({});           
+
+            node.on('input', function(msg) {
+                request(opts, function (error, response, body) {
             
-                if (JSON.parse(body).kind == "calendar#event") {
-                    msg.payload = "Success"
-                } else {
-                    msg.payload = "Fail"
+                    if (JSON.parse(body).kind == "calendar#event") {
+                        msg.payload = "Success"
+                    } else {
+                        msg.payload = "Fail"
+                    }
+                    
+                    node.send(msg);
+                })
+            });
+            
+            });
+    }
+    RED.nodes.registerType("addEvent", addEvent);
+
+    function calendarList(node, cb) {
+        node.calendars = {};
+        node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
+            if (err) {
+                cb(RED._("calendar.error.fetch-failed", {message:err.toString()}));
+                return;
+            }
+            if (data.error) {
+                cb(RED._("calendar.error.fetch-failed", {message:data.error.message}));
+                return;
+            }
+            for (var i = 0; i < data.items.length; i++) {
+                var cal = data.items[i];
+                if (cal.primary) {
+                    node.calendars.primary = cal;
                 }
-                
-                node.send(msg);
-            })
+                node.calendars[cal.id] = cal;
+            }
+            cb(null);
         });
     }
-    RED.nodes.registerType("addEvent",addEvent);
-}
+};
