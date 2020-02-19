@@ -11,8 +11,6 @@ module.exports = function(RED) {
         var timeMinConvert = n.timeMin ? new Date(n.timeMin).toISOString() : ''
         var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
         var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
-        var linkUrl = api + n.calendarId + '/events?' + timeMax + timeMin
-
 
         this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
@@ -20,20 +18,8 @@ module.exports = function(RED) {
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
             return;
-        }
-
-        
-        var opts = {
-            method: "GET",
-            url: linkUrl,
-            headers: {
-                "content-type": "application/json",
-                "Authorization": "Bearer " + this.google.credentials.accessToken
-            }
-        };      
-    
-        
-
+        }    
+             
         var node = this;
         node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
         calendarList(node, function(err) {
@@ -42,43 +28,50 @@ module.exports = function(RED) {
                 node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                 return;
             }
-            node.status({});           
+            node.status({});
+            var linkUrl = api + node.calendars.primary.id + '/events?' + timeMax + timeMin
+            var opts = {
+                method: "GET",
+                url: linkUrl,
+                headers: {
+                    "content-type": "application/json",
+                    "Authorization": "Bearer " + node.google.credentials.accessToken
+                }
+            };                       
 
             node.on('input', function(msg) {
                 request(opts, function (error, response, body) {                                             
-                        var arrObj = [];
-                        if (typeof(JSON.parse(body).items) == "undefined") {
-                            console.log(JSON.parse(body));                            
-                            msg.payload = "check your input!"
-                            node.send(msg);
-                            return;
-                        }                       
-                        JSON.parse(body).items.forEach(function (val) {
-                            var obj = {};
-                            var dateObj = new Date(val.start.dateTime);
-                            var startDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
-                            dateObj = new Date(val.end.dateTime);                      
-                            var endDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
-                            var title = '(No title)';
-                            if(val.summary) title = val.summary;
-                            var attend = [];
-                            if(val.attendees) attend = val.attendees
-                            
-                            obj = {
-                                "StartDate" : startDate,
-                                "EndDate" : endDate,
-                                "Title" : title,
-                                "Attendees" : attend
-                            }
-                            arrObj.push(obj);
-                        })
-                                        
-                        msg.payload = arrObj;
-                        node.send(msg);                    
+                    var arrObj = [];
+                    if (typeof(JSON.parse(body).items) == "undefined") {                 
+                        msg.payload = "check your input!"
+                        node.send(msg);
+                        return;
+                    }                       
+                    JSON.parse(body).items.forEach(function (val) {
+                        var obj = {};
+                        var dateObj = new Date(val.start.dateTime);
+                        var startDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
+                        dateObj = new Date(val.end.dateTime);                      
+                        var endDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
+                        var title = '(No title)';
+                        if(val.summary) title = val.summary;
+                        var attend = [];
+                        if(val.attendees) attend = val.attendees
+                        
+                        obj = {
+                            "StartDate" : startDate,
+                            "EndDate" : endDate,
+                            "Title" : title,
+                            "Attendees" : attend
+                        }
+                        arrObj.push(obj);
+                    })
+                                    
+                    msg.payload = arrObj;
+                    node.send(msg);                    
                 }) 
-            });
-            
-            });
+            });            
+        });
     }
     RED.nodes.registerType("GetEvent", getEvent);
 
@@ -98,7 +91,7 @@ module.exports = function(RED) {
                 if (cal.primary) {
                     node.calendars.primary = cal;
                 }
-                node.calendars[cal.id] = cal;
+                node.calendars[cal.id] = cal;                
             }
             cb(null);
         });

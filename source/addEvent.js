@@ -8,15 +8,18 @@ module.exports = function(RED) {
         var arrAttend = [];        
         if (n.attend > 0) {
             for (let index = 1; index < parseInt(n.attend) + 1; index++) {
-                arrAttend.push({
-                    email: n["email" + index],
-                    displayName: n["name" + index]
-                })                
+                if(n["email" + index] || n["name" + index]) {
+                    if (validateEmail(n["email" + index])) {
+                        arrAttend.push({
+                            email: n["email" + index] || '',
+                            displayName: n["name" + index] || ''
+                        })             
+                    }
+                }
             }            
         }
 
-        var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-        var linkUrl = api + n.calendarId + '/events'
+        var api = 'https://www.googleapis.com/calendar/v3/calendars/'        
         var newObj = {
             summary: n.tittle,
             description: n.description,
@@ -25,9 +28,7 @@ module.exports = function(RED) {
             end: {dateTime: new Date(n.end)},
             attendees: arrAttend
         }
-
         
-
 
         this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
@@ -36,17 +37,6 @@ module.exports = function(RED) {
             this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
-        
-        var opts = {
-            method: "POST",
-            url: linkUrl,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + this.google.credentials.accessToken
-            },
-            body: JSON.stringify(newObj)
-        };    
-        
 
         var node = this;
         node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
@@ -56,7 +46,17 @@ module.exports = function(RED) {
                 node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                 return;
             }
-            node.status({});           
+            node.status({});
+            var linkUrl = api + node.calendars.primary.id + '/events'
+            var opts = {
+                method: "POST",
+                url: linkUrl,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + node.google.credentials.accessToken
+                },
+                body: JSON.stringify(newObj)
+            };
 
             node.on('input', function(msg) {
                 request(opts, function (error, response, body) {
@@ -69,9 +69,8 @@ module.exports = function(RED) {
                     
                     node.send(msg);
                 })
-            });
-            
-            });
+            });            
+        });
     }
     RED.nodes.registerType("addEvent", addEvent);
 
@@ -95,5 +94,10 @@ module.exports = function(RED) {
             }
             cb(null);
         });
+    }
+
+    function validateEmail(email) {
+        var re = /\S+@\S+\.\S+/;
+        return re.test(email);
     }
 };

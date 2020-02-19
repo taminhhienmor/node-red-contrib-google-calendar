@@ -4,10 +4,6 @@
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendarId"><i class="icon-tag"></i> Id calendar</label>
-        <input type="text" id="node-input-calendarId" placeholder="CALENDAR_ID">
-    </div>
-    <div class="form-row">
         <label for="node-input-timeMin"><i class="icon-tag"></i> Time min</label>
         <input type="text" id="node-input-timeMin" placeholder="Feb 13, 2020 05:15:00">
     </div>
@@ -18,7 +14,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="GetEvent">
-  <p>Return the next event in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+  <p>Return the event in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
   <p>The incoming message can provide the following properties:
     <ul>
       <li><b>payload</b> - a text search string used to select relevant events</li>
@@ -33,7 +29,6 @@
         color:"#C0DEED",
         defaults: {
             google: {type:"google-credentials",required:true},
-            calendarId: {value:""},
             timeMin: {value:""},
             timeMax: {value:""}
         },
