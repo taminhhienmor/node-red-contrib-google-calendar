@@ -7,7 +7,7 @@ This is a node-red node for performing http(s) requests that use [Request](https
 run npm -g install node-red-contrib-google-calendar
 
 ## Features
-Add new event on google-calendar
+Add new event on google-calendar<br/>
 Get event on google-calendar
 
 # Get Key
