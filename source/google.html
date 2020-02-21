@@ -111,12 +111,12 @@
                         updateGoogleDisplayName(data.displayName);
                         delete window.googleConfigNodeIntervalId;
                     } else {
-                        window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
+                        // window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
                     }
                 });
              }
 
-            updateGoogleAuthButton();
+            // updateGoogleAuthButton();
 
             if (this.displayName) {
                 updateGoogleDisplayName(this.displayName);
@@ -131,7 +131,7 @@
                 var clientSecret = $("#node-config-input-clientSecret").val();
                 var url = 'google-credentials/auth?id='+id+'&clientId='+clientId+"&clientSecret="+clientSecret+"&callback="+encodeURIComponent(callback);
                 $(this).attr("href",url);
-                window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
+                // window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
             });
             $("#node-config-start-auth").click(function(e) {
                 var clientId = $("#node-config-input-clientId").val();

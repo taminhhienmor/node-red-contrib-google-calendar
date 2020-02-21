@@ -49,10 +49,25 @@ module.exports = function(RED) {
                     }                       
                     JSON.parse(body).items.forEach(function (val) {
                         var obj = {};
-                        var dateObj = new Date(val.start.dateTime);
-                        var startDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
-                        dateObj = new Date(val.end.dateTime);                      
-                        var endDate = dateObj.getFullYear() + '/' + (dateObj.getMonth() + 1) + '/' + dateObj.getDate() + " " + dateObj.getHours() + ':' + dateObj.getMinutes();
+                        var startDate;
+                        var endDate;
+                        if(typeof(val.start.dateTime) != "undefined") {
+                            var dateObjStart = new Date(val.start.dateTime);
+                            startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + dateObjStart.getHours() + ':' + dateObjStart.getMinutes();
+                            var dateObjEnd = new Date(val.end.dateTime);                      
+                            endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + dateObjEnd.getHours() + ':' + dateObjEnd.getMinutes();
+                        } else {
+                            if(typeof(val.start.date) != "undefined") {
+                                var dateObjStart = new Date(val.start.date);
+                                startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate();
+                                var dateObjEnd = new Date(val.end.date);                      
+                                endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate();
+                            } else {
+                                startDate = '';
+                                endDate = '';
+                            }
+                        }
+
                         var title = '(No title)';
                         if(val.summary) title = val.summary;
                         var attend = [];
