@@ -51,23 +51,17 @@ module.exports = function(RED) {
                         var obj = {};
                         var startDate;
                         var endDate;
-                        if(typeof(val.start.dateTime) != "undefined") {
-                            var dateObjStart = new Date(val.start.dateTime);
-                            startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + dateObjStart.getHours() + ':' + dateObjStart.getMinutes();
-                            var dateObjEnd = new Date(val.end.dateTime);                      
-                            endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + dateObjEnd.getHours() + ':' + dateObjEnd.getMinutes();
-                        } else {
-                            if(typeof(val.start.date) != "undefined") {
-                                var dateObjStart = new Date(val.start.date);
-                                startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate();
-                                var dateObjEnd = new Date(val.end.date);                      
-                                endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate();
-                            } else {
-                                startDate = '';
-                                endDate = '';
-                            }
-                        }
 
+                        if(typeof(val.start) != "undefined" && typeof(val.end) != "undefined") {
+                            var firstEleObj = Object.keys(val.start)[0];
+                            var dateObjStart = new Date(val.start[firstEleObj]);
+                            var dateObjEnd = new Date(val.end[firstEleObj]);
+                            startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + dateObjStart.getHours() + ':' + dateObjStart.getMinutes();
+                            endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + dateObjEnd.getHours() + ':' + dateObjEnd.getMinutes();                            
+                        } else {
+                            startDate = '';
+                            endDate = '';
+                        }
                         var title = '(No title)';
                         if(val.summary) title = val.summary;
                         var attend = [];
