@@ -363,7 +363,7 @@
 
   .daterangepicker .drp-calendar.left {
     clear: left;
-    margin-right: 0;
+    margin-right: 35px;
   }
 
   .daterangepicker .drp-calendar.left .calendar-table {
@@ -374,6 +374,7 @@
 
   .daterangepicker .drp-calendar.right {
     margin-left: 0;
+    margin-right: 30px;
   }
 
   .daterangepicker .drp-calendar.right .calendar-table {
