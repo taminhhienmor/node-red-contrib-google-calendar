@@ -25,19 +25,22 @@ module.exports = function(RED) {
             node.status({});
             node.on('input', function(msg) {
                 var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-                
+                var timeMaxInit = n.time.split(" - ")[1]
+                var timeMinInit = n.time.split(" - ")[0]
                 if(msg.payload.timemin) {
-                    n.timeMin = msg.payload.timemin
+                    timeMinInit = msg.payload.timemin
                 }
 
                 if(msg.payload.timemax) {
-                    n.timeMax = msg.payload.timemax
+                    timeMaxInit = msg.payload.timemax
                 }
                 
-                var timeMaxConvert = n.timeMax ? new Date(n.timeMax).toISOString() : ''
-                var timeMinConvert = n.timeMin ? new Date(n.timeMin).toISOString() : ''
+                var timeMaxConvert = timeMaxInit ? new Date(timeMaxInit).toISOString() : ''
+                var timeMinConvert = timeMinInit ? new Date(timeMinInit).toISOString() : ''
+                
                 var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
                 var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
+                
                 var linkUrl = api + node.calendars.primary.id + '/events?singleEvents=true&' + timeMax + timeMin
                 var opts = {
                     method: "GET",

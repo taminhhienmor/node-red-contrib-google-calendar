@@ -7,8 +7,7 @@
             tittle: {value:""},
             description: {value:""},
             location: {value:""},
-            start: {value:""},
-            end: {value:""},
+            time: {value:""},
             attend: {value:""},
             email1: {value:""},
             name1: {value:""},
@@ -23,10 +22,21 @@
         },
         inputs:1,
         outputs:1,
-        icon: "og-img.png",
+        icon: "add-event.png",
         paletteLabel: 'Add Event',
         label: function() {
             return this.name||"Add Event";
+        },
+        oneditprepare: function() {
+            $('input[id="node-input-time"]').daterangepicker({
+                timePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm A'
+                }
+            });
+
+            $('.drp-buttons').hide()
         }
     });
 
@@ -85,34 +95,33 @@
         }
     }
 </script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 <script type="text/x-red" data-template-name="addEvent">
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="calendar.label.google"></span></label>
+        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-tittle"><i class="icon-tag"></i> Tittle</label>
+        <label for="node-input-tittle"><i class="icon-bookmark"></i> Tittle</label>
         <input type="text" id="node-input-tittle" placeholder="Tittle">
     </div>
     <div class="form-row">
-        <label for="node-input-description"><i class="icon-tag"></i> description </label>
-        <input type="text" id="node-input-description" placeholder="description">
+        <label for="node-input-description"><i class="icon-align-justify"></i> Description </label>
+        <input type="text" id="node-input-description" placeholder="Description">
     </div>
     <div class="form-row">
-        <label for="node-input-location"><i class="icon-tag"></i> location</label>
-        <input type="text" id="node-input-location" placeholder="location">
-    </div>
+        <label for="node-input-location"><i class="icon-map-marker"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Ho Chi Minh">
+    </div>    
     <div class="form-row">
-        <label for="node-input-start"><i class="icon-tag"></i> start</label>
-        <input type="text" id="node-input-start" placeholder="Feb 13, 2020 05:15:00">
-    </div>
+        <label for="node-input-time"><i class="icon-calendar"></i> Time</label>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/datePicker.css" />
+        <input type="text" id="node-input-time" value="26/02/2020 12:00 AM - 26/02/2020 03:00 PM" >
+    </div> 
     <div class="form-row">
-        <label for="node-input-end"><i class="icon-tag"></i> end</label>
-        <input type="text" id="node-input-end" placeholder="Feb 13, 2020 06:15:00">
-    </div>
-    <div class="form-row">
-        <label for="node-input-attend"><i class="icon-tag"></i> attend</label>
+        <label for="node-input-attend"><i class="icon-tag"></i> Attend</label>
         <select id="node-input-attend" onchange="selectAttendPerson(this);">
             <option value="0"></option>
             <option value="1">1</option>
@@ -123,43 +132,53 @@
         </select>
         <label for="node-input-attend"> person</label>    
         <div id="grpOption1" style="display:none;">
-            <div>
-                <label for="node-input-email1"><i class="icon-tag"></i> email1</label>
-                <input type="text" id="node-input-email1" placeholder="john@example.com">
-                <label for="node-input-name1"><i class="icon-tag"></i> name1</label>
+            <div style="margin-top: 12px;">
+                <label for="node-input-email1"><i class="icon-envelope"></i> Email1</label>
+                <input type="text" id="node-input-email1" placeholder="john@example.com">                
+            </div>
+            <div style="margin-top: 12px;">
+                <label for="node-input-name1"><i class="icon-user"></i> Name1</label>
                 <input type="text" id="node-input-name1" placeholder="John">
             </div>
         </div>
         <div id="grpOption2" style="display:none;">
-            <div>
-                <label for="node-input-email2"><i class="icon-tag"></i> email2</label>
-                <input type="text" id="node-input-email2" placeholder="john@example.com">
-                <label for="node-input-name2"><i class="icon-tag"></i> name2</label>
+            <div style="margin-top: 12px;">
+                <label for="node-input-email2"><i class="icon-envelope"></i> Email2</label>
+                <input type="text" id="node-input-email2" placeholder="john@example.com">                
+            </div>
+            <div style="margin-top: 12px;">
+                <label for="node-input-name2"><i class="icon-user"></i> Name2</label>
                 <input type="text" id="node-input-name2" placeholder="John">
             </div>
         </div>
         <div id="grpOption3" style="display:none;">
-            <div>
-                <label for="node-input-email3"><i class="icon-tag"></i> email3</label>
-                <input type="text" id="node-input-email3" placeholder="john@example.com">
-                <label for="node-input-name3"><i class="icon-tag"></i> name3</label>
+            <div style="margin-top: 12px;">
+                <label for="node-input-email3"><i class="icon-envelope"></i> Email3</label>
+                <input type="text" id="node-input-email3" placeholder="john@example.com">                
+            </div>
+            <div style="margin-top: 12px;">
+                <label for="node-input-name3"><i class="icon-user"></i> Name3</label>
                 <input type="text" id="node-input-name3" placeholder="John">
             </div>
         </div>
         <div id="grpOption4" style="display:none;">
-            <div>
-                <label for="node-input-email4"><i class="icon-tag"></i> email4</label>
-                <input type="text" id="node-input-email4" placeholder="john@example.com">
-                <label for="node-input-name4"><i class="icon-tag"></i> name4</label>
+            <div style="margin-top: 12px;">
+                <label for="node-input-email4"><i class="icon-envelope"></i> Email4</label>
+                <input type="text" id="node-input-email4" placeholder="john@example.com">                
+            </div>
+            <div style="margin-top: 12px;">
+                <label for="node-input-name4"><i class="icon-user"></i> Name4</label>
                 <input type="text" id="node-input-name4" placeholder="John">
             </div>
         </div>
         <div id="grpOption5" style="display:none;">
-            <div>
-                <label for="node-input-email5"><i class="icon-tag"></i> email5</label>
-                <input type="text" id="node-input-email5" placeholder="john@example.com">
-                <label for="node-input-name5"><i class="icon-tag"></i> name5</label>
-                <input type="text" id="node-input-name5" placeholder="John">
+            <div style="margin-top: 12px;">
+                <label for="node-input-email5"><i class="icon-envelope"></i> Email5</label>
+                <input type="text" id="node-input-email5" placeholder="john@example.com">                
+            </div>
+            <div style="margin-top: 12px;">
+                <label for="node-input-name5"><i class="icon-user"></i> Name5</label>
+                <input type="text" id="node-input-name1" placeholder="John">
             </div>
         </div>
     </div>
@@ -167,6 +186,20 @@
 </script>
 
 <script type="text/html" data-help-name="addEvent">
-    <p>A simple node that converts the message payloads into all lower-case characters</p>
+    <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+    <p>The incoming message can provide the following properties:
+        <ul>
+        <li><b>title</b> - the summary string from the calendar entry</li>
+        <li><b>description</b> - the description from the calendar entry</li>
+        <li><b>location</b> - the location string from the calendar entry</li>
+        <li><b>start</b> - date of start time</li>        
+        <li><b>end</b> - date of end time</li>        
+        </ul>
+    </p>
+    <p>The message sent from the node will have properties:
+        <ul>        
+          <li><b>payload</b> - Success/Error</li>
+        </ul>
+      </p>
 </script>
 

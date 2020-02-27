@@ -32,9 +32,10 @@ module.exports = function(RED) {
                 n.tittle = msg.tittle ? msg.tittle : n.tittle
                 n.description = msg.description ? msg.description : n.description
                 n.location = msg.location ? msg.location : n.location
-                n.start = msg.start ? msg.start : n.start
-                n.end = msg.end ? msg.end : n.end
                 n.arrAttend = msg.arrAttend ? msg.arrAttend : n.arrAttend
+
+                var timeStart = msg.start ? msg.start : n.time.split(" - ")[0];
+                var timeEnd = msg.end ? msg.end : n.time.split(" - ")[1];
 
                 var arrAttend = [];        
                 if (n.attend > 0) {
@@ -48,17 +49,18 @@ module.exports = function(RED) {
                             }
                         }
                     }            
-                }
+                }                
 
                 var api = 'https://www.googleapis.com/calendar/v3/calendars/'        
                 var newObj = {
                     summary: n.tittle,
                     description: n.description,
                     location: n.location,
-                    start: {dateTime: new Date(n.start)},
-                    end: {dateTime: new Date(n.end)},
+                    start: {dateTime: new Date(timeStart)},
+                    end: {dateTime: new Date(timeEnd)},
                     attendees: arrAttend
                 }
+                
                 var linkUrl = api + node.calendars.primary.id + '/events'
                 var opts = {
                     method: "POST",
