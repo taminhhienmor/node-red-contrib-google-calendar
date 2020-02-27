@@ -4,13 +4,7 @@ module.exports = function(RED) {
     function getEvent(n) {
         RED.nodes.createNode(this,n);
             
-        this.google = RED.nodes.getNode(n.google);
-        var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-        
-        var timeMaxConvert = n.timeMax ? new Date(n.timeMax).toISOString() : ''
-        var timeMinConvert = n.timeMin ? new Date(n.timeMin).toISOString() : ''
-        var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
-        var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
+        this.google = RED.nodes.getNode(n.google);        
 
         this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
@@ -29,24 +23,38 @@ module.exports = function(RED) {
                 return;
             }
             node.status({});
-            var linkUrl = api + node.calendars.primary.id + '/events?' + timeMax + timeMin
-            var opts = {
-                method: "GET",
-                url: linkUrl,
-                headers: {
-                    "content-type": "application/json",
-                    "Authorization": "Bearer " + node.google.credentials.accessToken
-                }
-            };                       
-
             node.on('input', function(msg) {
+                var api = 'https://www.googleapis.com/calendar/v3/calendars/'
+                
+                if(msg.payload.timemin) {
+                    n.timeMin = msg.payload.timemin
+                }
+
+                if(msg.payload.timemax) {
+                    n.timeMax = msg.payload.timemax
+                }
+                
+                var timeMaxConvert = n.timeMax ? new Date(n.timeMax).toISOString() : ''
+                var timeMinConvert = n.timeMin ? new Date(n.timeMin).toISOString() : ''
+                var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
+                var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
+                var linkUrl = api + node.calendars.primary.id + '/events?singleEvents=true&' + timeMax + timeMin
+                var opts = {
+                    method: "GET",
+                    url: linkUrl,
+                    headers: {
+                        "content-type": "application/json",
+                        "Authorization": "Bearer " + node.google.credentials.accessToken
+                    }
+                };           
+
                 request(opts, function (error, response, body) {                                             
                     var arrObj = [];
                     if (typeof(JSON.parse(body).items) == "undefined") {                 
                         msg.payload = "check your input!"
                         node.send(msg);
                         return;
-                    }                       
+                    }        
                     JSON.parse(body).items.forEach(function (val) {
                         var obj = {};
                         var startDate;
@@ -56,8 +64,8 @@ module.exports = function(RED) {
                             var firstEleObj = Object.keys(val.start)[0];
                             var dateObjStart = new Date(val.start[firstEleObj]);
                             var dateObjEnd = new Date(val.end[firstEleObj]);
-                            startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + dateObjStart.getHours() + ':' + dateObjStart.getMinutes();
-                            endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + dateObjEnd.getHours() + ':' + dateObjEnd.getMinutes();                            
+                            startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + convertTimeFormat(dateObjStart.getHours()) + ':' + convertTimeFormat(dateObjStart.getMinutes());
+                            endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + convertTimeFormat(dateObjEnd.getHours()) + ':' + convertTimeFormat(dateObjEnd.getMinutes());                            
                         } else {
                             startDate = '';
                             endDate = '';
@@ -83,6 +91,10 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("GetEvent", getEvent);
+
+    function convertTimeFormat(time) {
+        return time > 9 ? time : '0' + time;
+    }
 
     function calendarList(node, cb) {
         node.calendars = {};

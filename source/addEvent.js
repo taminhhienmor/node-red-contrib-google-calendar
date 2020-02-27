@@ -5,29 +5,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
             
         this.google = RED.nodes.getNode(n.google);
-        var arrAttend = [];        
-        if (n.attend > 0) {
-            for (let index = 1; index < parseInt(n.attend) + 1; index++) {
-                if(n["email" + index] || n["name" + index]) {
-                    if (validateEmail(n["email" + index])) {
-                        arrAttend.push({
-                            email: n["email" + index] || '',
-                            displayName: n["name" + index] || ''
-                        })             
-                    }
-                }
-            }            
-        }
-
-        var api = 'https://www.googleapis.com/calendar/v3/calendars/'        
-        var newObj = {
-            summary: n.tittle,
-            description: n.description,
-            location: n.location,
-            start: {dateTime: new Date(n.start)},
-            end: {dateTime: new Date(n.end)},
-            attendees: arrAttend
-        }
+        
         
 
         this.calendar = n.calendar || 'primary';
@@ -47,18 +25,50 @@ module.exports = function(RED) {
                 return;
             }
             node.status({});
-            var linkUrl = api + node.calendars.primary.id + '/events'
-            var opts = {
-                method: "POST",
-                url: linkUrl,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + node.google.credentials.accessToken
-                },
-                body: JSON.stringify(newObj)
-            };
+
+            
 
             node.on('input', function(msg) {
+                n.tittle = msg.tittle ? msg.tittle : n.tittle
+                n.description = msg.description ? msg.description : n.description
+                n.location = msg.location ? msg.location : n.location
+                n.start = msg.start ? msg.start : n.start
+                n.end = msg.end ? msg.end : n.end
+                n.arrAttend = msg.arrAttend ? msg.arrAttend : n.arrAttend
+
+                var arrAttend = [];        
+                if (n.attend > 0) {
+                    for (let index = 1; index < parseInt(n.attend) + 1; index++) {
+                        if(n["email" + index] || n["name" + index]) {
+                            if (validateEmail(n["email" + index])) {
+                                arrAttend.push({
+                                    email: n["email" + index] || '',
+                                    displayName: n["name" + index] || ''
+                                })             
+                            }
+                        }
+                    }            
+                }
+
+                var api = 'https://www.googleapis.com/calendar/v3/calendars/'        
+                var newObj = {
+                    summary: n.tittle,
+                    description: n.description,
+                    location: n.location,
+                    start: {dateTime: new Date(n.start)},
+                    end: {dateTime: new Date(n.end)},
+                    attendees: arrAttend
+                }
+                var linkUrl = api + node.calendars.primary.id + '/events'
+                var opts = {
+                    method: "POST",
+                    url: linkUrl,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + node.google.credentials.accessToken
+                    },
+                    body: JSON.stringify(newObj)
+                };
                 request(opts, function (error, response, body) {
             
                     if (JSON.parse(body).kind == "calendar#event") {
