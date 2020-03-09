@@ -4,6 +4,7 @@
         color:"#C0DEED",
         defaults: {
             google: {type:"google-credentials",required:true},
+            calendarId: {value:""},
             tittle: {value:""},
             description: {value:""},
             location: {value:""},
@@ -104,6 +105,10 @@
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
+        <label for="node-input-calendarId"><i class="icon-tag"></i> Calendar</label>
+        <input type="text" id="node-input-calendarId" placeholder="1 OR idCalendar">
+    </div>
+    <div class="form-row">
         <label for="node-input-tittle"><i class="icon-bookmark"></i> Tittle</label>
         <input type="text" id="node-input-tittle" placeholder="Tittle">
     </div>
@@ -178,7 +183,7 @@
             </div>
             <div style="margin-top: 12px;">
                 <label for="node-input-name5"><i class="icon-user"></i> Name5</label>
-                <input type="text" id="node-input-name1" placeholder="John">
+                <input type="text" id="node-input-name5" placeholder="John">
             </div>
         </div>
     </div>

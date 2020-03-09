@@ -32,17 +32,24 @@
             <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> <span data-i18n="google.label.secret"></span></label>
             <input type="password" id="node-config-input-clientSecret">
         </div>
-        <div class="form-row">
+        <!-- <div class="form-row">
            <label>&nbsp;</label>
            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="google.label.authenticate"></span></a>
-        </div>
+        </div> -->
     </div>
     <div id="node-config-google">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> <span data-i18n="google.label.googleuser"></span></label><span id="node-config-google-displayName" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="google.label.googleuser"></span></label>
+            <input style ="cursor:auto; color:#555555;" id="node-config-input-displayName" class="input-xlarge uneditable-input"></input>
         </div>
-        <input type="hidden" id="node-config-input-displayName">
+        <!-- <input id="node-config-input-displayName"> -->
     </div>
+    <div id="node-config-google-client-keys2">
+        <div class="form-row">
+            <label>&nbsp;</label>
+            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="google.label.authenticate"></span></a>
+         </div>
+     </div>
 </script>
 
 <script type="text/javascript">
@@ -99,6 +106,7 @@
 
             function updateGoogleDisplayName(dn) {
                 $("#node-config-google-client-keys").hide();
+                $("#node-config-google-client-keys2").hide();
                 $("#node-config-google").show();
                 $("#node-config-input-displayName").val(dn);
                 $("#node-config-google-displayName").html(dn);
@@ -122,6 +130,7 @@
                 updateGoogleDisplayName(this.displayName);
             } else {
                 $("#node-config-google-client-keys").show();
+                $("#node-config-input-displayName").val("Google");
                 $("#node-config-google").hide();
                 // $("#node-config-dialog-ok").button("disable");
             }

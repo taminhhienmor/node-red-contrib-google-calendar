@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-google-calendar",
-    "version": "0.0.16",
+    "version": "0.0.20",
     "author": "minh hien <taminhhien.mor.vn@gmail.com>",
     "description": "The simplest of simple nodes with google calendar",
     "license": "Apache-2.0",
@@ -34,7 +34,6 @@
         "is-utf8": "^0.2.1",
         "minimatch": "^3.0.4",
         "mocha": "^6.2.2",
-        "moment": "^2.24.0",
         "nock": "^11.7.1",
         "node-red": "~1.0.3",
         "node-red-node-test-helper": "~0.2.3",

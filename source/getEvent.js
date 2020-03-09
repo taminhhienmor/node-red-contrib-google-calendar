@@ -1,64 +1,68 @@
-var request = require('request');
 module.exports = function(RED) {
     "use strict";
     function getEvent(n) {
         RED.nodes.createNode(this,n);
             
-        this.google = RED.nodes.getNode(n.google);        
+        this.google = RED.nodes.getNode(n.google);
 
-        this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
+        var calendarId = n.calendarId || 0
+        var isNum = Number.isInteger(parseInt(calendarId))
+        var linkCalendarId = ""
 
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }    
              
-        var node = this;
-        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
-        calendarList(node, function(err) {
-            if (err) {
-                node.error(err,{});
-                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
-                return;
-            }
-            node.status({});
-            node.on('input', function(msg) {
-                var api = 'https://www.googleapis.com/calendar/v3/calendars/'
-                var timeMaxInit = n.time.split(" - ")[1]
-                var timeMinInit = n.time.split(" - ")[0]
-                if(msg.payload.timemin) {
-                    timeMinInit = msg.payload.timemin
+        var node = this;        
+        node.on('input', function(msg) {           
+            node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, calendarIdData) {      
+                node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});    
+                if (err) {
+                    node.error(err,{});
+                    node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                    return;
+                }
+                // check calendar primary
+                for (var i = 0; i < calendarIdData.items.length; i++) {
+                    if (calendarIdData.items[i].primary) {
+                        linkCalendarId = calendarIdData.items[i].id;
+                    }               
                 }
 
-                if(msg.payload.timemax) {
-                    timeMaxInit = msg.payload.timemax
+                if (isNum) {                        
+                    if (calendarIdData.items[calendarId-1] || typeof(calendarIdData.items[calendarId-1]) != "undefined") {                     
+                        linkCalendarId = calendarIdData.items[calendarId-1].id
+                    }
+                } else {
+                    linkCalendarId = calendarId;
                 }
-                
+                linkCalendarId = encodeURIComponent(linkCalendarId)
+
+                var timeMaxInit = msg.payload.timemax? msg.payload.timemax : n.time.split(" - ")[1]
+                var timeMinInit = msg.payload.timemin? msg.payload.timemin : n.time.split(" - ")[0]            
                 var timeMaxConvert = timeMaxInit ? new Date(timeMaxInit).toISOString() : ''
                 var timeMinConvert = timeMinInit ? new Date(timeMinInit).toISOString() : ''
                 
                 var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
                 var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
-                
-                var linkUrl = api + node.calendars.primary.id + '/events?singleEvents=true&' + timeMax + timeMin
-                var opts = {
-                    method: "GET",
-                    url: linkUrl,
-                    headers: {
-                        "content-type": "application/json",
-                        "Authorization": "Bearer " + node.google.credentials.accessToken
-                    }
-                };           
 
-                request(opts, function (error, response, body) {                                             
+                var linkAPI = 'https://www.googleapis.com/calendar/v3/calendars/' + linkCalendarId + '/events?singleEvents=true&' + timeMax + timeMin          
+                node.google.request(linkAPI, function(errData, data) {
+                    if (errData) {
+                        node.error(errData,{});
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                        return;
+                    }
                     var arrObj = [];
-                    if (typeof(JSON.parse(body).items) == "undefined") {                 
-                        msg.payload = "check your input!"
+                    
+                    if (typeof(data.items) == "undefined") {                 
+                        msg.payload = "No data!"
                         node.send(msg);
                         return;
                     }        
-                    JSON.parse(body).items.forEach(function (val) {
+                    data.items.forEach(function (val) {
                         var obj = {};
                         var startDate;
                         var endDate;
@@ -88,36 +92,15 @@ module.exports = function(RED) {
                     })
                                     
                     msg.payload = arrObj;
-                    node.send(msg);                    
-                }) 
-            });            
+                    node.send(msg);
+                    node.status({});
+                })                
+            })
         });
     }
     RED.nodes.registerType("GetEvent", getEvent);
 
     function convertTimeFormat(time) {
         return time > 9 ? time : '0' + time;
-    }
-
-    function calendarList(node, cb) {
-        node.calendars = {};
-        node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
-            if (err) {
-                cb(RED._("calendar.error.fetch-failed", {message:err.toString()}));
-                return;
-            }
-            if (data.error) {
-                cb(RED._("calendar.error.fetch-failed", {message:data.error.message}));
-                return;
-            }
-            for (var i = 0; i < data.items.length; i++) {
-                var cal = data.items[i];
-                if (cal.primary) {
-                    node.calendars.primary = cal;
-                }
-                node.calendars[cal.id] = cal;                
-            }
-            cb(null);
-        });
     }
 };

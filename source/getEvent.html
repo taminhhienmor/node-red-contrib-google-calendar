@@ -4,6 +4,10 @@
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
+        <label for="node-input-calendarId"><i class="icon-tag"></i> Calendar</label>
+        <input type="text" id="node-input-calendarId" placeholder="1 OR idCalendar">
+    </div>
+    <div class="form-row">
         <label for="node-input-time"><i class="icon-calendar"></i> Time</label>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/datePicker.css" />
         <input type="text" id="node-input-time" value="26/02/2020 12:00 AM - 26/02/2020 03:00 PM" >
@@ -41,6 +45,7 @@
         color:"#C0DEED",
         defaults: {
             google: {type:"google-credentials",required:true},
+            calendarId: {value:""},
             time: {value:""}
         },
         inputs:1,

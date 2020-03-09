@@ -4,10 +4,11 @@ module.exports = function(RED) {
     function addEvent(n) {
         RED.nodes.createNode(this,n);
             
-        this.google = RED.nodes.getNode(n.google);
+        this.google = RED.nodes.getNode(n.google);        
         
-        
-
+        var calendarId = n.calendarId || 0
+        var isNum = Number.isInteger(parseInt(calendarId))
+        var linkCalendarId = ""
         this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
 
@@ -17,18 +18,15 @@ module.exports = function(RED) {
         }
 
         var node = this;
-        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
-        calendarList(node, function(err) {
-            if (err) {
-                node.error(err,{});
-                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
-                return;
-            }
-            node.status({});
-
-            
-
-            node.on('input', function(msg) {
+        node.on('input', function(msg) {
+            node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
+            node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, calendarIdData) {
+                if (err) {
+                    node.error(err,{});
+                    node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                    return;
+                }
+                node.status({});
                 n.tittle = msg.tittle ? msg.tittle : n.tittle
                 n.description = msg.description ? msg.description : n.description
                 n.location = msg.location ? msg.location : n.location
@@ -60,8 +58,22 @@ module.exports = function(RED) {
                     end: {dateTime: new Date(timeEnd)},
                     attendees: arrAttend
                 }
+                // check calendar primary
+                for (var i = 0; i < calendarIdData.items.length; i++) {
+                    if (calendarIdData.items[i].primary) {
+                        linkCalendarId = calendarIdData.items[i].id;
+                    }               
+                }
+
+                if (isNum) {                        
+                    if (calendarIdData.items[calendarId-1] || typeof(calendarIdData.items[calendarId-1]) != "undefined") {                     
+                        linkCalendarId = calendarIdData.items[calendarId-1].id
+                    }
+                } else {
+                    linkCalendarId = calendarId;
+                }
                 
-                var linkUrl = api + node.calendars.primary.id + '/events'
+                var linkUrl = api + encodeURIComponent(linkCalendarId) + '/events'
                 var opts = {
                     method: "POST",
                     url: linkUrl,
@@ -72,9 +84,13 @@ module.exports = function(RED) {
                     body: JSON.stringify(newObj)
                 };
                 request(opts, function (error, response, body) {
-            
+                    if (error) {
+                        node.error(error,{});
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                        return;
+                    }            
                     if (JSON.parse(body).kind == "calendar#event") {
-                        msg.payload = "Success"
+                        msg.payload = "Successfully add event to " + linkCalendarId
                     } else {
                         msg.payload = "Fail"
                     }
@@ -85,28 +101,6 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("addEvent", addEvent);
-
-    function calendarList(node, cb) {
-        node.calendars = {};
-        node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
-            if (err) {
-                cb(RED._("calendar.error.fetch-failed", {message:err.toString()}));
-                return;
-            }
-            if (data.error) {
-                cb(RED._("calendar.error.fetch-failed", {message:data.error.message}));
-                return;
-            }
-            for (var i = 0; i < data.items.length; i++) {
-                var cal = data.items[i];
-                if (cal.primary) {
-                    node.calendars.primary = cal;
-                }
-                node.calendars[cal.id] = cal;
-            }
-            cb(null);
-        });
-    }
 
     function validateEmail(email) {
         var re = /\S+@\S+\.\S+/;
