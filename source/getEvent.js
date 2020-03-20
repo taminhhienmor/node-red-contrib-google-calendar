@@ -3,9 +3,7 @@ module.exports = function(RED) {
     function getEvent(n) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
-
-        this.ongoing = n.ongoing || false;
-        var calendarId = encodeURIComponent(n.calendarId) || ""     
+        var calendarId = n.calendarId || ""
 
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
@@ -13,7 +11,8 @@ module.exports = function(RED) {
         }    
              
         var node = this;        
-        node.on('input', function(msg) {           
+        node.on('input', function(msg) {      
+            calendarId = msg.calendarId? msg.calendarId : calendarId      
             var timeMaxInit = msg.payload.timemax? msg.payload.timemax : n.time.split(" - ")[1]
             var timeMinInit = msg.payload.timemin? msg.payload.timemin : n.time.split(" - ")[0]            
             var timeMaxConvert = timeMaxInit ? new Date(timeMaxInit).toISOString() : ''
@@ -22,7 +21,7 @@ module.exports = function(RED) {
             var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
             var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
 
-            var linkAPI = 'https://www.googleapis.com/calendar/v3/calendars/' + calendarId + '/events?singleEvents=true&' + timeMax + timeMin          
+            var linkAPI = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(calendarId) + '/events?singleEvents=true&' + timeMax + timeMin          
             node.google.request(linkAPI, function(errData, data) {
                 if (errData) {
                     node.error(errData,{});

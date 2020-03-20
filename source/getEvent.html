@@ -1,21 +1,21 @@
 <script type="text/x-red" data-template-name="GetEvent">
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> Google</span></label>
-        <input type="text" id="node-input-google">
+      <label for="node-input-google"><i class="fa fa-user"></i> Google</span></label>
+      <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendarId"><i class="icon-tag"></i> Calendar</label>
-        <select id="node-input-calendarId" >
-        </select>
+      <label for="node-input-calendarId"><i class="fa fa-tag"></i> Calendar</label>
+      <select id="node-input-calendarId" >
+      </select>
     </div>
     <div class="form-row">
-        <label for="node-input-time"><i class="icon-calendar"></i> Time</label>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/datePicker.css" />
-        <input type="text" id="node-input-time" value="26/02/2020 12:00 AM - 26/02/2020 03:00 PM" >
+      <label for="node-input-time"><i class="fa fa-calendar"></i> Time</label>
+      <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/datePicker.css" />
+      <input type="text" id="node-input-time" value="26/02/2020 12:00 AM - 26/02/2020 03:00 PM" >
     </div>    
-</script>
-
-<script type="text/x-red" data-help-name="GetEvent">
+  </script>
+  
+  <script type="text/x-red" data-help-name="GetEvent">
     <p>Return the event in range time from <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
     <p>The incoming message can provide the following properties:
       <ul>
@@ -36,42 +36,42 @@
         </li>
       </ul>
     </p>
-</script>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script type="text/javascript">
+  </script>
+  
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <script type="text/javascript">
     RED.nodes.registerType('GetEvent',{
-        category: 'Google calendar event',
-        color:"#C0DEED",
-        defaults: {
-            google: {type:"google-credentials",required:true},
-            calendarId: {value:""},
-            time: {value:""}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "get-event.png",
-        paletteLabel: 'Get Event',
-        label: function() {
-            return this.name||"Get Event";
-        },
-        oneditprepare: function() {
-            $('input[id="node-input-time"]').daterangepicker({
-                timePicker: true,
-                showDropdowns: true,
-                locale: {
-                    format: 'MM/DD/YYYY hh:mm A'
-                }
-            });
-
-            $('.drp-buttons').hide()
-            var google = $("#node-input-google").val() || ""
-            $.getJSON('test?id=' + google, function(data) {
-              data.forEach(function(element) {
-                $("#node-input-calendarId").append('<option value=' + element.id + '>'+element.id+'</option>');
-              })              
-            })
-        }
+      category: 'Google calendar event',
+      color:"#C0DEED",
+      defaults: {
+        google: {type:"google-credentials",required:true},
+        calendarId: {value:""},
+        time: {value:""}
+      },
+      inputs:1,
+      outputs:1,
+      icon: "get-event.png",
+      paletteLabel: 'Get Event',
+      label: function() {
+        return this.name||"Get Event";
+      },
+      oneditprepare: function() {
+        $('input[id="node-input-time"]').daterangepicker({
+          timePicker: true,
+          showDropdowns: true,
+          locale: {
+            format: 'MM/DD/YYYY hh:mm A'
+          }
+        });
+  
+        $('.drp-buttons').hide()
+        var google = $("#node-input-google").val() || ""
+        $.getJSON('test?id=' + google, function(data) {
+          data.forEach(function(element) {
+            $("#node-input-calendarId").append('<option value=' + element.id + '>'+element.id+'</option>');
+          })              
+        })
+      }
     });
-</script>
+  </script>
