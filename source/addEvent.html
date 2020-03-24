@@ -1,34 +1,35 @@
 <script type="text/javascript">
-    RED.nodes.registerType('addEvent',{
+    var selected;
+    RED.nodes.registerType('addEvent', {
         category: 'Google calendar event',
-        color:"#C0DEED",
+        color: "#C0DEED",
         defaults: {
-            google: {type:"google-credentials",required:true},
-            calendarId: {value:""},
-            tittle: {value:""},
-            description: {value:""},
-            location: {value:""},
-            time: {value:""},
-            attend: {value:""},
-            email1: {value:""},
-            name1: {value:""},
-            email2: {value:""},
-            name2: {value:""},
-            email3: {value:""},
-            name3: {value:""},
-            email4: {value:""},
-            name4: {value:""},
-            email5: {value:""},
-            name5: {value:""}
+            google: { type: "google-credentials", required: true },
+            calendarId2: { value: "" },
+            tittle: { value: "" },
+            description: { value: "" },
+            location: { value: "" },
+            time: { value: "" },
+            attend: { value: "" },
+            email1: { value: "" },
+            name1: { value: "" },
+            email2: { value: "" },
+            name2: { value: "" },
+            email3: { value: "" },
+            name3: { value: "" },
+            email4: { value: "" },
+            name4: { value: "" },
+            email5: { value: "" },
+            name5: { value: "" }
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         icon: "add-event.png",
         paletteLabel: 'Add Event',
-        label: function() {
-            return this.name||"Add Event";
+        label: function () {
+            return this.name || "Add Event";
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
             $('input[id="node-input-time"]').daterangepicker({
                 timePicker: true,
                 showDropdowns: true,
@@ -39,11 +40,17 @@
 
             $('.drp-buttons').hide()
             var google = $("#node-input-google").val() || ""
-            $.getJSON('test?id=' + google, function(data) {
-              data.forEach(function(element) {
-                $("#node-input-calendarId").append('<option value=' + element.id + '>'+element.id+'</option>');
-              })              
+            $.getJSON('cal?id=' + google, function (data) {
+                data.forEach(function (element) {
+                    $("#node-input-calendarId2").append('<option value=' + element + '>' + element + '</option>');
+                    if (selected == element) {
+                        $('#node-input-calendarId2 option[value="' + selected + '"]').prop('selected', true)
+                    }
+                })
             })
+        },
+        oneditsave: function () {
+            selected = $("#node-input-calendarId2 option:selected").val();
         }
     });
 
@@ -55,47 +62,46 @@
         document.getElementById("grpOption5").style.display = "none";
     }
 
-    function selectAttendPerson(nameSelect)
-    {
-        if(nameSelect) {
+    function selectAttendPerson(nameSelect) {
+        if (nameSelect) {
             switch (parseInt(nameSelect.value)) {
-            case 0:
-                selectNone();
-                break;
-            case 1:
-                selectNone();
-                document.getElementById("grpOption1").style.display = "block";            
-                break;
-            case 2:
-                selectNone();
-                document.getElementById("grpOption1").style.display = "block";
-                document.getElementById("grpOption2").style.display = "block";  
-                break;
-            case 3:
-                selectNone();
-                document.getElementById("grpOption1").style.display = "block";
-                document.getElementById("grpOption2").style.display = "block";
-                document.getElementById("grpOption3").style.display = "block";
-                break;
-            case 4:
-                selectNone();
-                document.getElementById("grpOption1").style.display = "block";
-                document.getElementById("grpOption2").style.display = "block";
-                document.getElementById("grpOption3").style.display = "block";
-                document.getElementById("grpOption4").style.display = "block";
-                break;
-            case 5:
-                selectNone();
-                document.getElementById("grpOption1").style.display = "block";
-                document.getElementById("grpOption2").style.display = "block";
-                document.getElementById("grpOption3").style.display = "block";
-                document.getElementById("grpOption4").style.display = "block";
-                document.getElementById("grpOption5").style.display = "block";
-                break;
-            default:
-                selectNone();   
-                break;
-            }                        
+                case 0:
+                    selectNone();
+                    break;
+                case 1:
+                    selectNone();
+                    document.getElementById("grpOption1").style.display = "block";
+                    break;
+                case 2:
+                    selectNone();
+                    document.getElementById("grpOption1").style.display = "block";
+                    document.getElementById("grpOption2").style.display = "block";
+                    break;
+                case 3:
+                    selectNone();
+                    document.getElementById("grpOption1").style.display = "block";
+                    document.getElementById("grpOption2").style.display = "block";
+                    document.getElementById("grpOption3").style.display = "block";
+                    break;
+                case 4:
+                    selectNone();
+                    document.getElementById("grpOption1").style.display = "block";
+                    document.getElementById("grpOption2").style.display = "block";
+                    document.getElementById("grpOption3").style.display = "block";
+                    document.getElementById("grpOption4").style.display = "block";
+                    break;
+                case 5:
+                    selectNone();
+                    document.getElementById("grpOption1").style.display = "block";
+                    document.getElementById("grpOption2").style.display = "block";
+                    document.getElementById("grpOption3").style.display = "block";
+                    document.getElementById("grpOption4").style.display = "block";
+                    document.getElementById("grpOption5").style.display = "block";
+                    break;
+                default:
+                    selectNone();
+                    break;
+            }
         }
         else {
             selectNone();
@@ -111,9 +117,8 @@
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendarId"><i class="fa fa-tag"></i> Calendar</label>
-        <select id="node-input-calendarId" >
-        </select>
+        <label for="node-input-calendarId2"><i class="fa fa-tag"></i> Calendar</label>
+        <select id="node-input-calendarId2" style="width: 70%"></select>
     </div>
     <div class="form-row">
         <label for="node-input-tittle"><i class="fa fa-bookmark"></i> Tittle</label>
@@ -215,4 +220,3 @@
         </ul>
       </p>
 </script>
-

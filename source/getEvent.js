@@ -34,7 +34,10 @@ module.exports = function(RED) {
                     msg.payload = "No data!"
                     node.send(msg);
                     return;
-                }        
+                }
+                arrObj.push({
+                    "Calendar": calendarId
+                })        
                 data.items.forEach(function (val) {
                     var obj = {};
                     var startDate;
@@ -76,15 +79,30 @@ module.exports = function(RED) {
         return time > 9 ? time : '0' + time;
     }
 
-    RED.httpAdmin.get('/test', function(req, res) {        
+    RED.httpAdmin.get('/cal', function(req, res) {              
         var googleId = res.socket.parser.incoming._parsedUrl.path.split("id=")[1];        
         RED.nodes.getNode(googleId).request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
             if(err) return;
+
+            var primary = "";
+            var arrCalendar = [];
+
+            for (var i = 0; i < data.items.length; i++) {
+                var cal = data.items[i];
+                if (cal.primary) {
+                    primary = cal.id;                    
+                } else {
+                    arrCalendar.push(cal.id)
+                }
+            }
+
             var arrData = [];
-            data.items.forEach(function(element) {
+            arrData.push(primary);              
+            arrCalendar.sort();
+            arrCalendar.forEach(function(element) {
                 arrData.push(element)
-            })
-            res.json(arrData)
-        })        
+            })           
+            res.json(arrData)            
+        })
     })
 };
