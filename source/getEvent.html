@@ -5,14 +5,14 @@
     </div>
     <div class="form-row">
       <label for="node-input-calendarId"><i class="fa fa-tag"></i> Calendar</label>
-      <select id="node-input-calendarId2" style="width: 70%"></select>
+      <select id="node-input-calendarId" style="width: 70%"></select>
     </div>
     <div class="form-row">
       <label for="node-input-time"><i class="fa fa-calendar"></i> Time</label>
       <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/datePicker.css" />
       <input type="text" id="node-input-time" value="26/02/2020 12:00 AM - 26/02/2020 03:00 PM" >
     </div>    
-  </script>
+</script>
 
 <script type="text/x-red" data-help-name="GetEvent">
     <p>Return the event in range time from <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
@@ -21,6 +21,7 @@
         <li><b>payload.timemin</b> - a text search string used to select relevant events</li>
         <li><b>payload.timemax</b> - a text search string used to select relevant events</li>
         <li>example: msg.payload = { timemin:"Feb 12, 2020 00:15:15", timemax:"Feb 13, 2020 00:15:15"</li>
+        <li><b>calendarId</b> - a text search string used to select relevant events. Example: msg.calendarId = "abc@gmail.com"</li>
       </ul>
     </p>
     <p>The message sent from the node will have properties:
@@ -35,7 +36,7 @@
         </li>
       </ul>
     </p>
-  </script>
+</script>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -67,7 +68,7 @@
 
             $('.drp-buttons').hide()
             var google = $("#node-input-google").val() || ""
-            $.getJSON('cal?id=' + google, function (data) {
+            $.getJSON('cal-get?id=' + google, function (data) {
                 data.forEach(function (element) {
                     $("#node-input-calendarId").append('<option value=' + element + '>' + element + '</option>');
                     if (selected == element) {

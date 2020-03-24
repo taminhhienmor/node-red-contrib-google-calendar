@@ -79,7 +79,7 @@ module.exports = function(RED) {
         return time > 9 ? time : '0' + time;
     }
 
-    RED.httpAdmin.get('/cal', function(req, res) {              
+    RED.httpAdmin.get('/cal-get', function(req, res) {
         var googleId = res.socket.parser.incoming._parsedUrl.path.split("id=")[1];        
         RED.nodes.getNode(googleId).request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
             if(err) return;
@@ -101,7 +101,7 @@ module.exports = function(RED) {
             arrCalendar.sort();
             arrCalendar.forEach(function(element) {
                 arrData.push(element)
-            })           
+            })                     
             res.json(arrData)            
         })
     })

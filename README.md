@@ -14,8 +14,18 @@ Get event on google-calendar
 Follow to guideline: https://github.com/taminhhienmor/node-red-contrib-google-calendar/blob/master/guidelineGetKey.docx
 
 ## Example node
+
+Get event from google calendar...<br>
+![get-event](https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/image/addEvent.png)
 ``` node
-[{"id":"c07d2426.b09828","type":"inject","z":"c0cc4cd.3edecb","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":260,"y":360,"wires":[["8bec3e0d.5e395"]]},{"id":"d22a423c.fde51","type":"debug","z":"c0cc4cd.3edecb","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":670,"y":360,"wires":[]},{"id":"a3fb4d93.e8096","type":"inject","z":"c0cc4cd.3edecb","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":260,"y":280,"wires":[["bdfac1a9.59fd2"]]},{"id":"ad19d8f7.293f08","type":"debug","z":"c0cc4cd.3edecb","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":670,"y":280,"wires":[]},{"id":"bdfac1a9.59fd2","type":"GetEvent","z":"c0cc4cd.3edecb","google":"","timeMin":"Feb 13, 2020 06:15:00","timeMax":"Feb 18, 2020 06:15:00","x":440,"y":280,"wires":[["ad19d8f7.293f08"]]},{"id":"8bec3e0d.5e395","type":"addEvent","z":"c0cc4cd.3edecb","google":"","tittle":"Test no calendar ID","description":"this is my test","location":"Ho Chi Minh","start":"Feb 19. 2020 18:12:12","end":"Feb 19. 2020 19:12:12","attend":"1","email1":"abc@example.com","name1":"abc","email2":"","name2":"","email3":"","name3":"","email4":"","name4":"","email5":"","name5":"","x":450,"y":360,"wires":[["d22a423c.fde51"]]}]
+[{"id":"10024703.ece9d9","type":"inject","z":"81c8deb7.6db2d","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":320,"y":360,"wires":[["df05d057.adc84"]]},{"id":"e4c18a06.b32d68","type":"debug","z":"81c8deb7.6db2d","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":720,"y":360,"wires":[]},{"id":"df05d057.adc84","type":"GetEvent","z":"81c8deb7.6db2d","google":"","calendarId":"taminhhien.mor.vn@gmail.com","time":"03/24/2020 12:00 AM - 03/24/2020 11:59 PM","x":520,"y":360,"wires":[["e4c18a06.b32d68"]]}]
+```
+
+Add event to google calendar...<br>
+![add-event](https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/image/getEvent.png)
+![calendar-success](https://cdn.jsdelivr.net/gh/taminhhienmor/node-red-contrib-google-calendar/source/image/getEventSuccess.png)
+``` node
+[{"id":"1b7a6e62.038442","type":"inject","z":"81c8deb7.6db2d","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":200,"y":160,"wires":[["2d095a31.3d2dc6"]]},{"id":"fda646ee.5e2fa8","type":"debug","z":"81c8deb7.6db2d","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":590,"y":160,"wires":[]},{"id":"2d095a31.3d2dc6","type":"addEvent","z":"81c8deb7.6db2d","google":"","calendarId2":"taminhhien.mor.vn@gmail.com","tittle":"Test title","description":"This is description","location":"Ho Chi Minh","time":"03/24/2020 12:00 AM - 03/25/2020 11:59 PM","attend":"1","email1":"abc@example.com","name1":"ABC","email2":"","name2":"","email3":"","name3":"","email4":"","name4":"","email5":"","name5":"","x":390,"y":160,"wires":[["fda646ee.5e2fa8"]]}]
 ```
 
 ## Reference
