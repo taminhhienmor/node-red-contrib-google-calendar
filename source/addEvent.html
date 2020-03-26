@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    var selected;
+    var selected1;
     RED.nodes.registerType('addEvent', {
         category: 'Google calendar event',
         color: "#C0DEED",
@@ -43,14 +43,14 @@
             $.getJSON('cal?id=' + google, function (data) {
                 data.forEach(function (element) {
                     $("#node-input-calendarId2").append('<option value=' + element + '>' + element + '</option>');
-                    if (selected == element) {
-                        $('#node-input-calendarId2 option[value="' + selected + '"]').prop('selected', true)
+                    if (selected1 == element) {
+                        $('#node-input-calendarId2 option[value="' + selected1 + '"]').prop('selected', true)
                     }
                 })
             })
         },
         oneditsave: function () {
-            selected = $("#node-input-calendarId2 option:selected").val();
+            selected1 = $("#node-input-calendarId2 option:selected").val();
         }
     });
 
