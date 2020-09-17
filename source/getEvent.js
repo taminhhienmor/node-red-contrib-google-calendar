@@ -59,7 +59,8 @@ module.exports = function(RED) {
                     if(val.attendees) attend = val.attendees
                     
                     obj = {
-                        "Id" : val.id,
+                        "CalendarId": data.summary,
+                        "EventId" : val.id,
                         "Description" : val.description,
                         "StartDate" : startDate,
                         "EndDate" : endDate,
