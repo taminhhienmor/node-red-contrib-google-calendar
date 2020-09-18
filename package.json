@@ -22,7 +22,8 @@
         "nodes": {
             "google-api-config": "source/google.js",
             "addEvent": "source/addEvent.js",
-            "getEvent": "source/getEvent.js"
+            "getEvent": "source/getEvent.js",
+            "updateEvent": "source/updateEvent.js"
         }
     },
     "dependencies": {

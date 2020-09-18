@@ -1,0 +1,101 @@
+<script type="text/javascript">
+    var selected1;
+    RED.nodes.registerType('updateEvent', {
+        category: 'Google calendar event',
+        color: "#C0DEED",
+        defaults: {
+            google: { type: "google-credentials", required: true },
+            calendarId: { value: "" },
+            eventId: { value: "" },
+            title: { value: "" },
+            description: { value: "" },
+            location: { value: "" },
+            emailNotify: { value: true }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "add-event.png",
+        paletteLabel: 'Update Event',
+        label: function () {
+            return this.name || "Update Event";
+        },
+        oneditprepare: function () {
+            $('input[id="node-input-time"]').daterangepicker({
+                timePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm A'
+                }
+            });
+
+            $('.drp-buttons').hide()
+            let google = $("#node-input-google").val() || "",
+                eventId = $("#node-input-eventId").val() || "";
+
+            $.getJSON(`get-calendar-list?id=${google}&eventId=${eventId}`, function (data) {
+                data.forEach(function (element) {
+                    $("#node-input-calendarId").append('<option value=' + element + '>' + element + '</option>');
+                    if (selected1 == element) {
+                        $('#node-input-calendarId option[value="' + selected1 + '"]').prop('selected', true)
+                    }
+                })
+            })
+        },
+        oneditsave: function () {
+            selected1 = $("#node-input-calendarId option:selected").val();
+        }
+    });
+
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script type="text/x-red" data-template-name="updateEvent">
+    <div class="form-row">
+        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <input type="text" id="node-input-google">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendarId"><i class="fa fa-tag"></i> Calendar</label>
+        <select id="node-input-calendarId" style="width: 70%"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-eventId"><i class="fa fa-tag"></i> Event Id</label>
+        <input type="text" id="node-input-eventId" placeholder="Event Id">
+    </div>
+    <div class="form-row">
+        <label for="node-input-title"><i class="fa fa-bookmark"></i> Title</label>
+        <input type="text" id="node-input-title" placeholder="Title">
+    </div>
+    <div class="form-row">
+        <label for="node-input-description"><i class="fa fa-align-justify"></i> Description </label>
+        <input type="text" id="node-input-description" placeholder="Description">
+    </div>
+    <div class="form-row">
+        <label for="node-input-location"><i class="fa fa-map-marker"></i> Location</label>
+        <input type="text" id="node-input-location" placeholder="Ho Chi Minh">
+    </div>
+    <div class="form-row">
+        <label for="node-input-emailNotify"><i class="fa fa-map-marker"></i> Email notify</label>
+        <input type="checkbox" id="node-input-emailNotify" checked style="width:22px; vertical-align:top;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="updateEvent">
+    <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+    <p>The incoming message can provide the following properties:
+        <ul>
+            <li><b>Calendar</b> - the summary string from the calendar entry</li>
+            <li><b>title</b> - the summary string from the calendar entry</li>
+            <li><b>description</b> - the description from the calendar entry</li>
+            <li><b>location</b> - the location string from the calendar entry</li>
+            <li><b>start</b> - date of start time</li>        
+            <li><b>end</b> - date of end time</li>        
+        </ul>
+    </p>
+    <p>The message sent from the node will have properties:
+        <ul>        
+          <li><b>payload</b> - Success/Error</li>
+        </ul>
+      </p>
+</script>
