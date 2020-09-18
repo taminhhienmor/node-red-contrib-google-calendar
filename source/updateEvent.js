@@ -49,7 +49,7 @@ module.exports = function (RED) {
                 },
                 body: JSON.stringify(patchObj)
             };
-            console.log('opts', opts);
+            
             request(opts, function (error, response, body) {
                 if (error) {
                     node.error(error, {});
