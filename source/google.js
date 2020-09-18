@@ -79,11 +79,13 @@ module.exports = function(RED) {
                     },
                 },
                 function(err, result, data) {
+                    console.log('err', err, data);
                     if (err) {
                         node.error(RED._("google.error.token-request-error", {err: err}));
                         return exponentialBackoff.backoff();
                     }
                     if (data.error) {
+                        console.log('data.error', data.error);
                         node.error(RED._("google.error.refresh-token-error", {message: data.error.message}));
                         return exponentialBackoff.backoff();
                     }

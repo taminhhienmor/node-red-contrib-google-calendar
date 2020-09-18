@@ -30,7 +30,7 @@ module.exports = function (RED) {
                 description: description,
                 location: location
             }
-
+            
             //remove empty fields
             Object.keys(patchObj).forEach(key => patchObj[key] === '' && delete patchObj[key]);
             
@@ -50,7 +50,6 @@ module.exports = function (RED) {
                 body: JSON.stringify(patchObj)
             };
             console.log('opts', opts);
-            return;
             request(opts, function (error, response, body) {
                 if (error) {
                     node.error(error, {});
