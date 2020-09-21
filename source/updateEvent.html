@@ -82,17 +82,15 @@
 </script>
 
 <script type="text/html" data-help-name="updateEvent">
-    <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
-    <p>The incoming message can provide the following properties:
+    <p>Update an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+    <p>This node can update the following properties:
         <ul>
-            <li><b>Calendar</b> - the summary string from the calendar entry</li>
-            <li><b>title</b> - the summary string from the calendar entry</li>
-            <li><b>description</b> - the description from the calendar entry</li>
-            <li><b>location</b> - the location string from the calendar entry</li>
-            <li><b>start</b> - date of start time</li>        
-            <li><b>end</b> - date of end time</li>        
+            <li><b>Title</b> - the summary string from the calendar entry</li>
+            <li><b>Description</b> - the description from the calendar entry</li>
+            <li><b>Location</b> - the location string from the calendar entry</li>
         </ul>
     </p>
+    <p>You can notify all attendees about event changes using the checkbox "Email notify"</p>
     <p>The message sent from the node will have properties:
         <ul>        
           <li><b>payload</b> - Success/Error</li>

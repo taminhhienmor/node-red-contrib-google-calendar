@@ -24,6 +24,11 @@ module.exports = function (RED) {
                 location = n.location || msg.location || "",
                 emailNotify = n.emailNotify || msg.emailNotify ? "?sendUpdates=all" : "";
 
+            if( !eventId || !calendarId ) {
+                node.status({ fill: "red", shape: "ring", text: "Please specify eventId and calendarId" });
+                return;
+            }
+
             let baseApi = 'https://www.googleapis.com/calendar/v3/calendars/';
             let patchObj = {
                 summary: title,
@@ -59,8 +64,10 @@ module.exports = function (RED) {
                 
                 if (JSON.parse(body).kind == "calendar#event") {
                     msg.payload = "Successfully update event of " + calendarId
+                    node.status({ fill: "green", shape: "ring", text: "Update successfully" });
                 } else {
                     msg.payload = "Fail to update"
+                    node.status({ fill: "red", shape: "ring", text: "Fail to update" });
                 }
 
                 node.send(msg);
