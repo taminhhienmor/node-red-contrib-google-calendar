@@ -3,32 +3,31 @@ module.exports = function(RED) {
     function getEvent(n) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
-        var calendarId = n.calendarId || ""
-
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }    
              
-        var node = this;        
-        node.on('input', function(msg) {      
-            calendarId = msg.calendarId? msg.calendarId : calendarId      
-            var timeMaxInit = msg.payload.timemax? msg.payload.timemax : n.time.split(" - ")[1]
-            var timeMinInit = msg.payload.timemin? msg.payload.timemin : n.time.split(" - ")[0]            
-            var timeMaxConvert = timeMaxInit ? new Date(timeMaxInit).toISOString() : ''
-            var timeMinConvert = timeMinInit ? new Date(timeMinInit).toISOString() : ''
-            
-            var timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
-            var timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
+        let node = this;
 
-            var linkAPI = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(calendarId) + '/events?singleEvents=true&' + timeMax + timeMin          
+        node.on('input', function(msg) {      
+            let calendarId = n.calendarId || msg.calendarId || "";
+            let timeMaxInit = msg.payload.timemax? msg.payload.timemax : n.time.split(" - ")[1];
+            let timeMinInit = msg.payload.timemin? msg.payload.timemin : n.time.split(" - ")[0];           
+            let timeMaxConvert = timeMaxInit ? new Date(timeMaxInit).toISOString() : '';
+            let timeMinConvert = timeMinInit ? new Date(timeMinInit).toISOString() : '';
+            
+            let timeMax = 'timeMax=' + encodeURIComponent(timeMaxConvert)        
+            let timeMin = '&timeMin=' + encodeURIComponent(timeMinConvert)
+
+            let linkAPI = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(calendarId) + '/events?singleEvents=true&' + timeMax + timeMin          
             node.google.request(linkAPI, function(errData, data) {
                 if (errData) {
                     node.error(errData,{});
                     node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                     return;
                 }
-                var arrObj = [];
+                let arrObj = [];
                 
                 if (typeof(data.items) == "undefined") {                 
                     msg.payload = "No data!"
@@ -39,23 +38,23 @@ module.exports = function(RED) {
                     "Calendar": calendarId
                 })        
                 data.items.forEach(function (val) {
-                    var obj = {};
-                    var startDate;
-                    var endDate;
+                    let obj = {};
+                    let startDate;
+                    let endDate;
 
                     if(typeof(val.start) != "undefined" && typeof(val.end) != "undefined") {
-                        var firstEleObj = Object.keys(val.start)[0];
-                        var dateObjStart = new Date(val.start[firstEleObj]);
-                        var dateObjEnd = new Date(val.end[firstEleObj]);
+                        let firstEleObj = Object.keys(val.start)[0];
+                        let dateObjStart = new Date(val.start[firstEleObj]);
+                        let dateObjEnd = new Date(val.end[firstEleObj]);
                         startDate = dateObjStart.getFullYear() + '/' + (dateObjStart.getMonth() + 1) + '/' + dateObjStart.getDate() + " " + convertTimeFormat(dateObjStart.getHours()) + ':' + convertTimeFormat(dateObjStart.getMinutes());
                         endDate = dateObjEnd.getFullYear() + '/' + (dateObjEnd.getMonth() + 1) + '/' + dateObjEnd.getDate() + " " + convertTimeFormat(dateObjEnd.getHours()) + ':' + convertTimeFormat(dateObjEnd.getMinutes());                            
                     } else {
                         startDate = '';
                         endDate = '';
                     }
-                    var title = '(No title)';
+                    let title = '(No title)';
                     if(val.summary) title = val.summary;
-                    var attend = [];
+                    let attend = [];
                     if(val.attendees) attend = val.attendees
                     
                     obj = {
@@ -83,7 +82,8 @@ module.exports = function(RED) {
     }
 
     RED.httpAdmin.get('/cal-get', function(req, res) {
-        var googleId = res.socket.parser.incoming._parsedUrl.path.split("id=")[1];        
+        let googleId = req.query.id;
+
         RED.nodes.getNode(googleId).request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
             if(err) return;
 

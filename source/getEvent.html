@@ -67,7 +67,8 @@
             });
 
             $('.drp-buttons').hide()
-            var google = $("#node-input-google").val() || ""
+            let google = $("#node-input-google").val() || "";
+            
             $.getJSON('cal-get?id=' + google, function (data) {
                 data.forEach(function (element) {
                     $("#node-input-calendarId").append('<option value=' + element + '>' + element + '</option>');
