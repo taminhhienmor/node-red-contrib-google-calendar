@@ -30,7 +30,7 @@
         "aws-sdk": "^2.597.0",
         "backoff": "^2.5.0",
         "clone": "^2.1.2",
-        "dropbox": "^2.5.10",
+        "dropbox": "^10.32.0",
         "fs-extra": "^8.1.0",
         "is-utf8": "^0.2.1",
         "minimatch": "^3.0.4",
